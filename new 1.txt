@@ -1,0 +1,117 @@
+select * from planning WHERE equipment = '3' order by end desc ;
+select * from planning WHERE (start OR end BETWEEN '2019-04-01 00:00:00' AND '2019-04-30 00:00:00') AND equipment = '3' order by end asc ;
+# select * from planning WHERE (end OR start BETWEEN '2019-04-01 00:00:00' AND '2019-04-30 00:00:00') AND equipment = '3' order by end asc ;
+# select * from planning WHERE (end OR start BETWEEN '2019-04-01 00:00:00' AND '2019-04-30 00:00:00') AND equipment = '3' order by end desc ;
+#
+# SELECT ProductName
+# FROM Products
+# WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+
+# select name from equipment where id = ANY (SELECT equipment from planning);
+# select * from planning;
+
+# Select T0.ItemCode, sum(T0.InQty - T0.OutQty) as "Qty In/Out" from dbo.OINM T0
+#
+# Where T0.DocDate <= '[%0]' and T0.InQty != T0.OutQty
+#
+# Group by T0.ItemCode Having sum(T0.InQty) = sum(T0.OutQty)
+#
+# Order by T0.ItemCode
+
+# SELECT COALESCE(SUM(Quantity), 0) from inventory_bookings Where item_name LIKE '" + selecteditem + "' AND '" + from_date + "'<= date_to AND date_from < '"+to_date+"'"
+# "SELECT initial_quantity from inventory_items Where item_name LIKE '" + selecteditem + "'; "
+
+# SELECT stock from equipment where id like 2;
+
+# select coalesce(sum(3),0), id from planning where equipment like 3 and '2019-04-01 00:00:00' <= start AND  end  <'2019-04-30 00:00:00';
+
+# SELECT r.*
+# FROM rooms r
+#          LEFT JOIN bookins b ON b.room_id = r.id
+# WHERE b.id IS NULL
+#    OR (b.checkout >= DATE_GIVEN_AS_CHECKIN_INPUT AND b.checkin >= DATE_GIVEN_AS_CHECKOUT_INPUT)
+#    OR (b.checkout <= DATE_GIVEN_AS_CHECKIN_INPUT AND b.checkout <= DATE_GIVEN_AS_CHECKOUT_INPUT)
+
+
+
+
+
+
+select *
+from equipment left join planning p on equipment.id = p.equipment
+where equipment.id is NULL
+or (p.end >= '2019-04-01 00:00:00' AND p.start >= '2019-04-30 00:00:00')
+or (p.end <= '2019-04-01 00:00:00' AND p.end >= '2019-04-30 00:00:00');
+
+
+# SELECT distinct r.roomID
+# FROM Rooms as r
+#          INNER JOIN Bookings as b
+#                     ON r.roomID = b.roomID
+# WHERE ('2013-03-20' NOT BETWEEN dateFrom AND dateTo)
+#   AND ('2013-03-21' NOT BETWEEN dateFrom AND dateTo)
+
+
+select *
+from  equipment as x inner join planning p on x.id = p.equipment
+where ('2019-04-01 00:00:00' not between start and end)
+and ('2019-04-30 00:00:00' not between start and end);
+
+#"SELECT * FROM `reservations` WHERE `vehicle_id`=1 AND (`start_date`>".$start_date." AND `end_date`<".$end_date.") OR (`start_date`<".$start_date." AND `end_date`>".$end_date.")
+# OR (`start_date<".$end_date." AND `end_date`>".$end_date.") OR (`start_date`<".$start_date." AND `end_date`>".$start_date.")"
+
+select * from planning where equipment = '3'
+AND (start > '2019-04-01 00:00:00' AND end < '2019-04-30 00:00:00')
+or  (start < '2019-04-01 00:00:00' AND end > '2019-04-30 00:00:00')
+or  (start < '2019-04-30 00:00:00' AND end > '2019-04-30 00:00:00')
+or  (start < '2019-04-30 00:00:00' AND end > '2019-04-01 00:00:00');
+
+#
+# SELECT *
+# FROM room
+# WHERE room_id NOT IN
+#       (SELECT room_id
+#        FROM bookings
+#        WHERE
+#            (checkin <= '$check_in' AND checkout >= '$check_in') OR
+#            (checkin <= '$check_out' AND checkout >= '$check_out') OR
+#            (checkin >= '$check_in' AND checkout <= '$check_out'))
+
+select *
+from equipment
+where id not in
+(select equipment
+from planning
+    where
+    (start <= '2019-04-01 00:00:00' and end >= '2019-04-30 00:00:00') or
+    (start <= '2019-04-30 00:00:00' and end >= '2019-04-30 00:00:00') or
+    (start >= '2019-04-01 00:00:00' and end <= '2019-04-01 00:00:00')) AND id = '1';
+
+
+# SELECT rt.id, rt.type, rt.total_no_of_rooms,
+#        IFNULL(SUM(r.no_of_rooms), 0) as "reserved rooms",
+#        rt.total_no_of_rooms - IFNULL(SUM(r.no_of_rooms),0) as "rooms available"
+# FROM Roomtypes rt
+#          LEFT OUTER JOIN Reservation r ON r.roomtype_id = rt.id
+#     AND '2018-04-11 10:00:00' >= r.check_in
+#     AND '2018-04-12 09:59:59' <= r.check_out
+# GROUP BY rt.id, rt.type, rt.total_no_of_rooms;
+#
+
+
+SELECT x.id, x.name, x.stock,
+       IFNULL(SUM(p.quantity), 0) as 'Reserved items',
+       stock - ifnull(sum(p.quantity), 0) as 'Items available'
+from equipment x
+left join planning p on x.id = p.equipment
+    AND '2019-03-28 00:00:00' >= p.start
+    AND '2019-04-01 00:00:00' <= p.end
+GROUP BY x.id, x.name, x.stock;
+
+select * from planning where '2019-04-01 00:00:00' >= start AND '2019-04-30 00:00:00' >= end order by start asc;
+
+select * from planning WHERE  end BETWEEN '2019-04-01 00:00:00' AND '2019-04-30 00:00:00'
+or start BETWEEN '2019-04-01 00:00:00' AND '2019-04-30 00:00:00'
+order by end asc;
+
+select * from planning where equipment = '3' order by start asc;
